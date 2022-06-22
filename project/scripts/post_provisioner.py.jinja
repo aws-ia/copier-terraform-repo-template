@@ -1,0 +1,90 @@
+"""Define the post provisioning steps to be taken by Copier to complete module generation."""
+import os
+import subprocess
+from shutil import rmtree
+
+
+def on_error_handler(func, path, exc_info) -> None:
+    """Handle exceptions raised by the rmtree method."""
+    print(f"Warning! Exception encountered while attempting to cleanup project path: ({path})! Continuing...\nExc Info: ({exc_info})")
+
+
+class CleanupModuleOutput:
+    """Define the cleanup object to handle finalizing module output and self destuction."""
+
+    def __init__(self) -> None:
+        """Initialize the cleanup module output object."""
+        self.vcs_provider: str = "[[ vcs_provider ]]"
+        self.enable_tfsec: bool = [[ enable_tfsec ]]
+        self.enable_precommit: bool = [[ enable_precommit ]]
+        self.enable_terraform_tests: bool = [[ enable_terraform_tests ]]
+        self.enable_tflint: bool = [[ enable_tflint ]]
+        self.enable_terraform_docs: bool = [[ enable_terraform_docs ]]
+        self.enable_examples: bool = [[ enable_examples ]]
+
+    def remove_directory(self, directory_path: str) -> None:
+        """Remove the target directory and it's contents by path."""
+        rmtree(directory_path, onerror=on_error_handler)
+
+    def remove_file(self, file_path: str) -> None:
+        """Remove the target file by path."""
+        try:
+            os.remove(file_path)
+        except OSError:
+            print(f"Warning! OSError encountered while attempting to cleanup project file: ({file_path})! Continuing...")
+    
+    def cleanup(self) -> None:
+        """Cleanup the module by executing cleanup methods."""
+        self.cleanup_vcs()
+        self.cleanup_precommit()
+        self.cleanup_terraform_docs()
+        self.cleanup_tfsec()
+        self.cleanup_tests()
+        self.cleanup_tflint()
+        self.cleanup_examples()
+
+    def cleanup_vcs(self) -> None:
+        if self.vcs_provider == "github.com":
+            self.remove_file(".gitlab-ci.yml")
+        elif self.vcs_provider == "gitlab.com":
+            self.remove_directory(".github")
+
+    def cleanup_precommit(self) -> None:
+        if not self.enable_precommit:
+            self.remove_file(".pre-commit-config.yaml")
+
+    def cleanup_tfsec(self) -> None:
+        if not self.enable_tfsec:
+            self.remove_directory(".tfsec")
+
+    def cleanup_tflint(self) -> None:
+        if not self.enable_tflint:
+            self.remove_file(".tflint.hcl")
+
+    def cleanup_terraform_docs(self) -> None:
+        if not self.enable_terraform_docs:
+            self.remove_file(".header.md")
+            self.remove_file("examples/.header.md")
+            self.remove_file(".terraform-docs.yaml")
+
+    def cleanup_tests(self) -> None:
+        if not self.enable_terraform_tests:
+            self.remove_directory("tests")
+
+    def cleanup_examples(self) -> None:
+        if not self.enable_examples:
+            self.remove_directory("examples")
+
+    def execute_format(self) -> None:
+        subprocess.run(["terraform", "fmt", "-recursive", "."])
+
+    def self_destruct(self) -> None:
+        self.remove_directory(os.path.dirname(__file__))
+
+
+if __name__ == "__main__":
+    cleanup_module: CleanupModuleOutput = CleanupModuleOutput()
+    cleanup_module.cleanup()
+    cleanup_module.execute_format()
+    cleanup_module.self_destruct()
+    print("Module generated successfully!")

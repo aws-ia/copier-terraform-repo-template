@@ -1,0 +1,125 @@
+# Copier Configuration
+_subdirectory: project
+_templates_suffix: .jinja
+_skip_if_exists:
+- CHANGELOG.md
+_tasks:
+- python scripts/post_provisioner.py
+
+# User Input
+module_name:
+  type: str
+  help: The name of your module
+
+module_description:
+  type: str
+  help: The description of your module
+
+author_fullname:
+  type: str
+  help: Your full name
+
+author_email:
+  type: str
+  help: Your email
+
+author_username:
+  type: str
+  help: Your username (e.g. on GitHub/GitLab)
+
+vcs_provider:
+  type: str
+  help: Your VCS / repository provider
+  default: github.com
+  choices:
+  - github.com
+  - gitlab.com
+
+copyright_holder:
+  type: str
+  help: The name of the organization or individual holding the copyright
+  default: '[[ author_fullname ]]'
+
+copyright_holder_email:
+  type: str
+  help: The email of the organization or individual holding the copyright
+  default: '[[ author_email ]]'
+
+copyright_year:
+  type: str
+  help: The copyright year
+  default: '2022'
+
+copyright_license:
+  type: str
+  help: Your project's license
+  default: Apache License 2.0
+  choices:
+  - Apache License 2.0
+  - MIT License
+  - MIT-0 License
+
+enable_precommit:
+  type: bool
+  help: Enable pre-commit (for git hooks of common checks)?
+  default: yes
+
+enable_tflint:
+  type: bool
+  help: Enable tflint (for more robust Terraform linting)?
+  default: yes
+
+enable_tfsec:
+  type: bool
+  help: Enable TFSec (for Terraform security controls and custom checks)?
+  default: yes
+
+enable_terraform_docs:
+  type: bool
+  help: Enable terraform-docs (for automatic documentation of common Terraform resources)?
+  default: yes
+
+enable_examples:
+  type: bool
+  help: Enable Examples directory creation (for demonstrating basic module usage)?
+  default: yes
+
+enable_terraform_tests:
+  type: bool
+  help: Enable basic Terraform test example (using Terratest)?
+  default: yes
+
+enable_awscc:
+  type: bool
+  help: Enable AWS CC provider?
+  default: yes
+
+terraform_version:
+  type: str
+  help: The Terraform required_version constraint value
+  default: '>= 0.14.0'
+
+aws_provider_version:
+  type: str
+  help: The AWS Provider required_providers version constraint value.
+  default: '>= 4.0.0, < 5.0.0'
+
+awscc_provider_version:
+  type: str
+  help: The AWS CC Provider required_providers version constraint value.
+  default: '>= 0.24.0'
+
+minimum_pre_commit_version:
+  type: str
+  help: The minimum version of pre-commit supported by the output project git hook routines.
+  default: '2.6.0'
+
+pre_commit_hooks_rev:
+  type: str
+  help: The pre-commit-hooks revision
+  default: '80ed3f0a164f282afaac0b6aec70e20f7e541932'
+
+tflint_aws_plugin_version:
+  type: str
+  help: The TFLint AWS Plugin version
+  default: '0.14.0'
