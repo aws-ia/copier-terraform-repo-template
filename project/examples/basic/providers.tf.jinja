@@ -1,0 +1,15 @@
+terraform {
+  required_version = "[[ terraform_version ]]"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "[[ aws_provider_version ]]"
+    }
+    [% if enable_awscc -%]
+    awscc = {
+      source  = "hashicorp/awscc"
+      version = "[[ awscc_provider_version ]]"
+    }
+    [%- endif %]
+  }
+}
