@@ -5,6 +5,18 @@ _skip_if_exists:
 - CHANGELOG.md
 _tasks:
 - python scripts/post_provisioner.py
+_min_copier_version: "5.1.0"
+
+# Ensure backwards compatibility with Copier 5.x
+_envops:
+  autoescape: false
+  block_end_string: "%]"
+  block_start_string: "[%"
+  comment_end_string: "#]"
+  comment_start_string: "[#"
+  keep_trailing_newline: true
+  variable_end_string: "]]"
+  variable_start_string: "[["
 
 # User Input
 module_name:
